@@ -10,3 +10,5 @@ streamlit>=1.40.0
 # Step 4: LangChain — provider-agnostic LLM interface
 langchain-core>=0.3.0
 langchain-groq>=0.2.0
+
+# Step 5: (no new deps — @tool ships with langchain-core)

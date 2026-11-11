@@ -126,3 +126,39 @@ LangChain message objects instead of the raw `openai` SDK.
 .venv/bin/python -c "from src.llm import get_llm; print(get_llm())"
 # (needs GROQ_API_KEY in .env)
 ```
+
+---
+
+## Step 5 — Tool calling (`get_order`)
+
+**What:** `src/tools.py` with a `@tool`-decorated `get_order`; the UI binds
+tools to the LLM and runs a **manual tool loop**.
+
+**Why tools matter:** LLMs are frozen at training time — they cannot know
+ORD-1002's status. Tool calling lets the model *request* real data while
+staying the "brain" that plans the conversation.
+
+**The mechanism (visible in `streamlit_app.py`):**
+1. `llm.bind_tools(TOOLS)` — attaches JSON schemas (auto-generated from the
+   function signature + docstring) to the request.
+2. Model replies with either normal content **or** `tool_calls`
+   (name + JSON args). It does not execute anything itself.
+3. **Our code** runs the real Python function → append a `ToolMessage`.
+4. Call the model again with the result → it may call more tools or give
+   the final answer. Loop until no `tool_calls`.
+
+**Why the docstring matters:** the model reads it to decide *when* to use
+the tool and how to fill arguments. Bad docstring = bad tool selection.
+
+**Why a not-found path?** Tools must return data the LLM can relay —
+including "doesn't exist". Never raise into the model loop; return a
+structured message (see `get_order` for `ORD-9999`).
+
+**What's clunky on purpose:** the while-loop in the UI is verbose. Step 6
+moves it into LangGraph — you'll feel exactly what the framework buys you.
+
+**Try it:**
+```bash
+GROQ_API_KEY=... .venv/bin/python -c "from src.tools import get_order; print(get_order.invoke({'order_id':'ORD-1001'}))"
+# In the UI: "Where is ORD-1002?" → watch the 🔧 tool expander fire.
+```
