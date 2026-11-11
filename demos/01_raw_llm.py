@@ -24,7 +24,7 @@ from src.data.policies import SYSTEM_PROMPT  # noqa: E402
 
 # Groq exposes an OpenAI-compatible endpoint — same SDK, different base_url.
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "qwen/qwen3.8-27b"
 
 
 def main() -> None:

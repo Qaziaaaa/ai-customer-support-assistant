@@ -20,8 +20,9 @@ from langchain_groq import ChatGroq
 
 from src.config import get_settings
 
-# Groq's free tier shines on this model: fast + solid tool-calling support.
-DEFAULT_MODEL = "llama-3.3-70b-versatile"
+# Groq's free tier: qwen3.8-27b is fast, stable and supports tool calling.
+# (llama-3.3-70b-versatile was removed from Groq in late 2026.)
+DEFAULT_MODEL = "qwen/qwen3.8-27b"
 
 
 @lru_cache(maxsize=1)
