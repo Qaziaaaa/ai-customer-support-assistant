@@ -1,3 +1,5 @@
-# Step 1: only python-dotenv is needed for config loading.
-# LangChain / LangGraph / Streamlit packages are added in later steps.
+# Step 1: config loading
 python-dotenv>=1.0.0
+
+# Step 2: raw OpenAI-compatible client (Groq speaks this protocol)
+openai>=1.40.0
