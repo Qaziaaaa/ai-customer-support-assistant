@@ -15,3 +15,6 @@ langchain-groq>=0.2.0
 
 # Step 6: LangGraph — explicit agent workflow with typed state
 langgraph>=0.2.60
+
+# Step 7: LangSmith — tracing/observability (key optional; app runs without it)
+langsmith>=0.2.0

@@ -201,3 +201,44 @@ GROQ_API_KEY=dummy .venv/bin/python -c \
 
 **Try it:** run the UI and ask *"Where is ORD-1002?"* — the spinner covers
 the agent→tools→agent hops; answer cites live order data.
+
+---
+
+## Step 7 — LangSmith tracing (`src/tracing.py`)
+
+**What:** `setup_tracing()` (called at UI startup) + demo script
+`demos/02_langsmith_trace.py`.
+
+**What problem does observability solve?** When the agent answers wrong,
+"the LLM messed up" is not actionable. LangSmith records every hop as a
+nested **run** (span):
+
+```
+graph.invoke
+├─ agent        ← LLM call #1: model chose tool_calls for ORD-1002
+├─ tools        ← get_order("ORD-1002") in → status out
+└─ agent        ← LLM call #2: final answer built from tool result
+```
+
+Click any span to see exact prompts, raw JSON args, latency, tokens.
+Debugging becomes *which hop lied*, not *somewhere in the black box*.
+
+**How it attaches (key insight):** you do NOT instrument `graph.py`.
+LangChain/LangGraph ship with callbacks that read env vars:
+`LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`.
+Our module only translates `.env` → process env (plus legacy
+`LANGCHAIN_*` aliases). Tracing is a **config-layer** concern.
+
+**Fail-open design:** no key → `setup_tracing()` returns False → app runs
+identically with zero traces. Same principle as error handling elsewhere:
+observability must never take down the product.
+
+**Get your free keys:**
+- Groq: https://console.groq.com/keys
+- LangSmith: https://smith.langchain.com/settings (Developer plan, 5k traces/mo, no card)
+
+**Try it:**
+```bash
+python3 demos/02_langsmith_trace.py "Where is ORD-1002?"
+# then open the printed smith.langchain.com URL
+```

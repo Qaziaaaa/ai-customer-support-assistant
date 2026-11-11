@@ -19,8 +19,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src.config import ConfigError
 from src.graph import run_agent
+from src.tracing import setup_tracing
 
 st.set_page_config(page_title="NovaMart Support", page_icon="🎧", layout="centered")
+setup_tracing()  # before any LLM call — no-op if no LangSmith key
 
 # --- session state: chat history lives here between reruns -----------------
 if "messages" not in st.session_state:
