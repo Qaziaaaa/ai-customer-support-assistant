@@ -1,11 +1,10 @@
-"""NovaMart support chat — UI entry point (Step 5: tool calling).
+"""NovaMart support chat — UI entry point (Step 6: LangGraph).
 
 Run with:
     .venv/bin/streamlit run streamlit_app.py
 
 Responsibility boundary: this file ONLY renders UI and stores chat history.
-The manual tool loop below is what LangGraph will own in Step 6 — keep an
-eye on it, because that entire block moves into src/graph.py next step.
+All workflow logic (tool loop, state, routing) lives in src/graph.py.
 """
 
 from __future__ import annotations
@@ -14,19 +13,12 @@ import sys
 from pathlib import Path
 
 import streamlit as st
-from langchain_core.messages import (
-    AIMessage,
-    HumanMessage,
-    SystemMessage,
-    ToolMessage,
-)
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src.config import ConfigError
-from src.data.policies import SYSTEM_PROMPT
-from src.llm import get_llm
-from src.tools import TOOLS
+from src.graph import run_agent
 
 st.set_page_config(page_title="NovaMart Support", page_icon="🎧", layout="centered")
 
@@ -58,39 +50,29 @@ if user_input:
     with st.chat_message("assistant"):
         with st.spinner("Thinking…"):
             try:
-                # Bind tools: sends the JSON schemas along with the prompt.
-                llm = get_llm().bind_tools(TOOLS)
-                history = [SystemMessage(content=SYSTEM_PROMPT)] + st.session_state.messages
-
-                # --- MANUAL TOOL LOOP (LangGraph replaces this in Step 6) ---
-                # One model call; if it requests a tool we run it and call
-                # the model AGAIN with the result. Repeat until it answers.
-                ai_message = llm.invoke(history)
-                tool_calls = getattr(ai_message, "tool_calls", None) or []
-
-                while tool_calls:
-                    st.session_state.messages.append(ai_message)
-                    for tc in tool_calls:
-                        # Execute the real Python function by name.
-                        tool_fn = next(t for t in TOOLS if t.name == tc["name"])
-                        result = tool_fn.invoke(tc["args"])
-                        st.session_state.messages.append(
-                            ToolMessage(content=str(result), tool_call_id=tc["id"])
-                        )
-                        with st.expander(f"🔧 tool: {tc['name']}({tc['args']})"):
-                            st.code(str(result))
-                    # Feed results back — model may call more tools or answer.
-                    ai_message = llm.invoke(
-                        [SystemMessage(content=SYSTEM_PROMPT)] + st.session_state.messages
-                    )
-                    tool_calls = getattr(ai_message, "tool_calls", None) or []
-                # --- END MANUAL TOOL LOOP -----------------------------------
-
-                answer = ai_message.content or "(no response)"
+                # The whole agent workflow in one call:
+                # agent ⇄ tools loop runs inside the graph, not here.
+                updated = run_agent(st.session_state.messages)
+                # Replace history with the graph's output (it includes our
+                # new user msg + any tool messages + final AI answer).
+                st.session_state.messages = updated
+                answer = next(
+                    (m.content for m in reversed(updated)
+                     if isinstance(m, AIMessage) and not getattr(m, "tool_calls", None)),
+                    "(no response)",
+                )
             except ConfigError as exc:
                 answer = f"⚠️ Configuration problem:\n\n{exc}"
+                st.session_state.messages.append(AIMessage(content=answer))
             except Exception as exc:
-                answer = f"⚠️ Sorry, the model call failed: `{exc}`"
+                answer = f"⚠️ Sorry, the workflow failed: `{exc}`"
+                st.session_state.messages.append(AIMessage(content=answer))
         st.markdown(answer)
 
-    st.session_state.messages.append(AIMessage(content=answer))
+    # ToolMessage entries from the graph are already in `updated`;
+    # ensure the final answer is present even if finders failed.
+    if not any(
+        isinstance(m, AIMessage) and m.content == answer
+        for m in st.session_state.messages
+    ):
+        st.session_state.messages.append(AIMessage(content=answer))

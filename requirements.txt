@@ -12,3 +12,6 @@ langchain-core>=0.3.0
 langchain-groq>=0.2.0
 
 # Step 5: (no new deps — @tool ships with langchain-core)
+
+# Step 6: LangGraph — explicit agent workflow with typed state
+langgraph>=0.2.60

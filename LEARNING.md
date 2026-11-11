@@ -162,3 +162,42 @@ moves it into LangGraph — you'll feel exactly what the framework buys you.
 GROQ_API_KEY=... .venv/bin/python -c "from src.tools import get_order; print(get_order.invoke({'order_id':'ORD-1001'}))"
 # In the UI: "Where is ORD-1002?" → watch the 🔧 tool expander fire.
 ```
+
+---
+
+## Step 6 — LangGraph workflow (`src/graph.py`)
+
+**What:** explicit `StateGraph` with two nodes (`agent`, `tools`) and a
+conditional edge. The UI's manual while-loop is gone — it now calls
+`run_agent(history)`.
+
+**Why a graph, not just a loop?**
+| Concern | Step 5 (manual loop) | Step 6 (LangGraph) |
+|---|---|---|
+| Where memory lives | UI's `session_state` + ad-hoc list | Typed `AgentState` with `add_messages` reducer |
+| Tool loop | `while` in the UI | Conditional edge: `agent → tools → agent` |
+| Observability | one opaque LLM call | each node = a named span (LangSmith, Step 7) |
+| Future nodes (RAG, HITL…) | more UI spaghetti | `g.add_node(...)` + one edge |
+
+**The three LangGraph concepts this file teaches:**
+1. **State** — `AgentState(TypedDict)` is the data every node reads/writes.
+   `Annotated[list, add_messages]` is a *reducer*: nodes append messages
+   instead of overwriting (otherwise each hop would erase history).
+2. **Nodes** — plain functions `state → partial state update`. `_agent_node`
+   calls the LLM; `ToolNode` is prebuilt and executes tool calls by name.
+3. **Conditional edges** — `_should_continue` inspects the last message:
+   has `tool_calls`? → route to `tools`; else → `END`. This *is* the agent
+   loop, declared as data instead of written as control flow.
+
+**System prompt placement:** injected at `invoke()` time, not stored in
+state — the UI never displays it, and it can't be accidentally truncated
+out of the conversation.
+
+**Visualize the graph yourself:**
+```bash
+GROQ_API_KEY=dummy .venv/bin/python -c \
+  "from src.graph import build_graph; print(build_graph().get_graph().draw_mermaid())"
+```
+
+**Try it:** run the UI and ask *"Where is ORD-1002?"* — the spinner covers
+the agent→tools→agent hops; answer cites live order data.
