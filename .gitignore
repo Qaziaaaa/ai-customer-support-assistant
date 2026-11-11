@@ -11,7 +11,10 @@ venv/
 # OS / editor
 .DS_Store
 .idea/
-.vscode/
+# Share .vscode/extensions.json + settings.json (diagram preview);
+# ignore only personal/local VS Code files:
+.vscode/*.log
+.vscode/ipch/
 
 # Streamlit
 .streamlit/secrets.toml

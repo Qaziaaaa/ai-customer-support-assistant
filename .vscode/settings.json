@@ -1,0 +1,12 @@
+{
+  // Render ```mermaid blocks in the built-in Markdown preview (Ctrl+Shift+V).
+  // Requires the recommended extension "Markdown Preview Mermaid Support"
+  // (bierner.markdown-mermaid) — VS Code prompts to install it on open.
+  "markdown.preview.breaks": true,
+  "markdown.preview.linkify": true,
+  "editor.wordWrap": "on",
+  "files.trimTrailingWhitespace": true,
+  // Side-by-side: edit ARCHITECTURE.md on the left, live preview on the right.
+  "workbench.editor.enablePreview": true,
+  "workbench.editor.openSideBySideDirection": "right"
+}
