@@ -273,3 +273,45 @@ branding lives in **one file**; Python never mixes with presentation.
 
 **Try it:** `.venv/bin/streamlit run streamlit_app.py` — sidebar right,
 bubbles left, amber expanders appear when tools fire.
+
+---
+
+## Step 9 — Architecture docs (Mermaid)
+
+**What:** [ARCHITECTURE.md](ARCHITECTURE.md) with 6 diagrams + README rewrite.
+
+**Why diagrams as code (Mermaid)?** They live in the repo, diff with code,
+and render on GitHub/VS Code — architecture that can't rot silently into a
+stale PNG. Each diagram maps to real files; read them side by side.
+
+**The six diagrams and what each teaches:**
+1. **Module map** — dependency direction: UI → graph → llm/tools → data;
+   who is allowed to import whom.
+2. **Sequence flow** — one turn end-to-end; shows the UI only participates
+   at the start/end (why the graph is reusable for APIs/bots later).
+3. **State graph** — nodes, conditional edge, `add_messages` reducer.
+4. **Tool contract** — the exact JSON that crosses the wire; the model
+   requests, Python executes.
+5. **Trace anatomy** — one turn = one trace with nested spans; debug by
+   finding the first wrong span.
+6. **Future plug-in points** — where RAG/Redis/HITL/multi-agent attach
+   with `add_node` instead of rewrites.
+
+**How to read this project now:**
+```
+LEARNING.md (why each step exists)
+  → ARCHITECTURE.md (how the pieces connect)
+    → src/graph.py (the heart — everything else serves it)
+```
+
+**Full verification checklist:**
+```bash
+# structure & imports
+python3 -c "from src.graph import build_graph; print(build_graph().get_graph().draw_mermaid())"
+# tool behavior
+python3 -c "from src.tools import get_order; print(get_order.invoke({'order_id':'ORD-1001'}))"
+# UI boots
+streamlit run streamlit_app.py
+# live LLM + tool + trace (needs keys in .env)
+python3 demos/02_langsmith_trace.py "Where is ORD-1002?"
+```

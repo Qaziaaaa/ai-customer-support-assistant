@@ -106,7 +106,7 @@ with st.sidebar:
 
 # ── Main chat ──────────────────────────────────────────────────────────────
 st.title("🎧 NovaMart Support")
-st.caption("Ask about orders, delivery, refunds or warranty — try *"Where is ORD-1002?"*)
+st.caption('Ask about orders, delivery, refunds or warranty — try *"Where is ORD-1002?"*')
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
