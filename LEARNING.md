@@ -92,3 +92,37 @@ replaces that one call with LangChain — watch how little else changes.
 ```
 Ask "what's your refund policy?" then a follow-up like "and if it's damaged?" —
 the second answer only works because history is resent.
+
+---
+
+## Step 4 — LangChain layer (ChatGroq factory)
+
+**What:** `src/llm.py` (`get_llm()`), UI now calls `llm.invoke(...)` with
+LangChain message objects instead of the raw `openai` SDK.
+
+**Why LangChain at all?** It answers three recurring pain points:
+1. **Provider abstraction** — `ChatGroq`, `ChatOpenAI`, `ChatGoogleGenerativeAI`
+   all expose `.invoke(messages)`. Swapping providers = edit one factory.
+2. **Message types** — `SystemMessage` / `HumanMessage` / `AIMessage` are
+   classes, not dicts; fewer typos, tool-calling fields come for free later.
+3. **Integration surface** — tools (Step 5), LangGraph (Step 6) and LangSmith
+   (Step 7) all speak "LangChain objects". Skipping this layer means
+   re-implementing all three yourself.
+
+**What did NOT change?** The UI flow (render → call → persist) and
+`config.py`. That's the point of the factory: `streamlit_app.py` imports
+`get_llm`, never `ChatGroq` directly.
+
+**Design details worth noting:**
+- `temperature=0` — support answers should be reproducible, not creative.
+- `@lru_cache` on the factory — Streamlit re-runs the script constantly;
+  cache the client for the process lifetime.
+- `demos/01_raw_llm.py` stays untouched as a permanent baseline: when
+  something breaks in the framework stack, the raw demo tells you whether
+  the API itself is fine.
+
+**Try it:**
+```bash
+.venv/bin/python -c "from src.llm import get_llm; print(get_llm())"
+# (needs GROQ_API_KEY in .env)
+```
