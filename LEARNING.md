@@ -242,3 +242,34 @@ observability must never take down the product.
 python3 demos/02_langsmith_trace.py "Where is ORD-1002?"
 # then open the printed smith.langchain.com URL
 ```
+
+---
+
+## Step 8 — Custom theme + sidebar (`styles/custom.css`)
+
+**What:** full visual identity (dark navy + brand gradient), chat bubbles,
+sidebar with order lookup, live workflow explainer, LangSmith link, clear
+button.
+
+**Why CSS in a Python project?** Streamlit renders HTML — `st.markdown`
+with `unsafe_allow_html=True` injects our stylesheet once at startup. All
+branding lives in **one file**; Python never mixes with presentation.
+
+**Three-layer CSS structure (a pattern worth stealing):**
+1. **Design tokens** (`:root` vars) — colors, radii in one block; rebrand
+   by editing 10 lines, not 200 selectors.
+2. **App chrome** — background gradients, sidebar, inputs, buttons.
+3. **Chat bubbles** — `:has([data-testid="stChatMessageAvatarUser"])`
+   targets Streamlit's internal test IDs to style user vs assistant sides.
+
+**Sidebar pieces and why each exists:**
+- **Quick order lookup** — deterministic (pure Python, no LLM) so users can
+  compare "what the tool sees" vs "what the model says".
+- **How a reply is made** — live diagram of the graph nodes; reinforces the
+  architecture while using the product.
+- **Observability card** — tracing status + deep link; fail-open design
+  visible in the UI (off state explains the fix).
+- **Clear conversation** — resets `session_state.messages`.
+
+**Try it:** `.venv/bin/streamlit run streamlit_app.py` — sidebar right,
+bubbles left, amber expanders appear when tools fire.

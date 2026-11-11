@@ -1,0 +1,183 @@
+/* NovaMart brand theme — loaded via st.markdown(..., unsafe_allow_html=True)
+   in streamlit_app.py.
+
+   Streamlit's default look is fine for prototypes but reads "generic AI
+   demo". This stylesheet overrides the theme at three levels:
+     1. Design tokens  (:root vars — one place to rebrand)
+     2. App chrome     (header, sidebar, inputs)
+     3. Chat bubbles   (the part users actually stare at)
+*/
+
+/* ── 1. Design tokens ─────────────────────────────────────────── */
+:root {
+  --nm-bg: #0b1020;           /* deep navy — app background */
+  --nm-surface: #121a33;      /* panels, sidebar */
+  --nm-surface-2: #1a2444;    /* elevated cards */
+  --nm-accent: #6c8cff;       /* primary brand blue-violet */
+  --nm-accent-2: #35d0ba;     /* secondary teal (status OK) */
+  --nm-warn: #ffb454;         /* tool / attention */
+  --nm-text: #e8ecf8;
+  --nm-text-dim: #93a0c2;
+  --nm-user-bubble: #2a3a6e;
+  --nm-bot-bubble: #16203f;
+  --nm-border: rgba(108, 140, 255, 0.18);
+  --nm-radius: 14px;
+}
+
+/* ── 2. App chrome ────────────────────────────────────────────── */
+.stApp {
+  background:
+    radial-gradient(1200px 500px at 80% -10%, rgba(108, 140, 255, 0.16), transparent 60%),
+    radial-gradient(900px 420px at 0% 110%, rgba(53, 208, 186, 0.10), transparent 55%),
+    var(--nm-bg);
+  color: var(--nm-text);
+}
+
+/* Header block (title + caption) */
+header[data-testid="stHeader"] { background: transparent; }
+
+.stApp > header { background: transparent; }
+
+div.block-container {
+  padding-top: 2.2rem;
+  max-width: 880px;
+}
+
+/* Title styling */
+h1[data-testid="stTitle"] {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(90deg, var(--nm-text) 20%, var(--nm-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+p[data-testid="stCaption"] { color: var(--nm-text-dim); }
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+  background: var(--nm-surface);
+  border-right: 1px solid var(--nm-border);
+}
+section[data-testid="stSidebar"] .block-container { padding-top: 1.4rem; }
+
+/* Inputs */
+div[data-testid="stChatInput"] {
+  background: var(--nm-surface);
+  border: 1px solid var(--nm-border);
+  border-radius: var(--nm-radius);
+}
+div[data-testid="stChatInput"] textarea { color: var(--nm-text); }
+
+/* Buttons — primary gets the brand gradient */
+div[data-testid="stButton"] > button[kind="primary"],
+.stButton > button[kind="primary"] {
+  background: linear-gradient(135deg, var(--nm-accent), #8b5cf6);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+div[data-testid="stButton"] > button[kind="primary"]:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+/* ── 3. Chat bubbles ──────────────────────────────────────────── */
+/* Each chat_message wrapper gets its own surface so bubbles sit on cards */
+[data-testid="stChatMessage"] {
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0;
+}
+
+[data-testid="stChatMessage"] .markdown-container {
+  max-width: 82%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--nm-radius);
+  line-height: 1.55;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+}
+
+/* User = right-aligned accent card */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) .markdown-container {
+  background: linear-gradient(135deg, var(--nm-user-bubble), #33478f);
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+  color: #f2f5ff;
+}
+
+/* Assistant = left-aligned darker card with accent edge */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) .markdown-container {
+  background: var(--nm-bot-bubble);
+  border: 1px solid var(--nm-border);
+  border-bottom-left-radius: 4px;
+  color: var(--nm-text);
+}
+
+/* Code / tool output inside bubbles stays readable */
+[data-testid="stChatMessage"] pre {
+  background: #0a0f1f !important;
+  border: 1px solid var(--nm-border);
+  border-radius: 8px;
+}
+
+/* Tool expander — amber accent so learners spot tool hops */
+details[data-testid="stExpander"] {
+  background: rgba(255, 180, 84, 0.06);
+  border: 1px solid rgba(255, 180, 84, 0.28);
+  border-radius: 10px;
+}
+details[data-testid="stExpander"] summary {
+  color: var(--nm-warn);
+  font-weight: 600;
+}
+
+/* ── Sidebar cards (how-it-works / order lookup) ──────────────── */
+.nm-card {
+  background: var(--nm-surface-2);
+  border: 1px solid var(--nm-border);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.88rem;
+  color: var(--nm-text);
+}
+.nm-card h4 {
+  margin: 0 0 0.45rem 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nm-accent);
+}
+.nm-card .nm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.18rem 0;
+  color: var(--nm-text-dim);
+}
+.nm-card .nm-row strong { color: var(--nm-text); font-weight: 600; }
+
+.nm-status-pill {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.nm-status-Delivered   { background: rgba(53, 208, 186, 0.18); color: #35d0ba; }
+.nm-status-In_transit  { background: rgba(108, 140, 255, 0.18); color: #8fa8ff; }
+.nm-status-Shipped     { background: rgba(108, 140, 255, 0.18); color: #8fa8ff; }
+.nm-status-Cancelled   { background: rgba(255, 107, 107, 0.16); color: #ff8b8b; }
+
+.nm-flow {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--nm-text-dim);
+  line-height: 1.7;
+}
+.nm-flow b { color: var(--nm-accent-2); font-weight: 600; }
