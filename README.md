@@ -54,6 +54,18 @@ Deep dives (6 diagrams): **[ARCHITECTURE.md](ARCHITECTURE.md)** —
 module map, sequence flow, state graph, tool contract, trace anatomy,
 future extension points.
 
+### Viewing diagrams in VS Code
+
+This workspace ships `.vscode/extensions.json` — VS Code will prompt to
+install **Markdown Preview Mermaid Support** when you open the folder.
+
+1. Open `ARCHITECTURE.md` or `README.md`
+2. `Ctrl+Shift+V` (or click the preview icon, top-right)
+3. Diagrams render inline; scroll — each section has one
+
+If the prompt doesn't appear: `Ctrl+Shift+X` → search
+`Markdown Preview Mermaid Support` → Install.
+
 ## Project layout
 
 ```
