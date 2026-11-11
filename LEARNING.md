@@ -58,3 +58,37 @@ cp .env.example .env    # paste your Groq key
 .venv/bin/python demos/01_raw_llm.py "What is your refund window?"
 ```
 (Without a key you should see the friendly CONFIG ERROR — that's by design.)
+
+---
+
+## Step 3 — Streamlit chat UI (multi-turn, raw LLM)
+
+**What:** `streamlit_app.py` — chat bubbles, input box, history in
+`st.session_state`.
+
+**Why Streamlit?** Python-only, so the learning focus stays on the AI stack.
+It is a *server-side reactive* framework: the whole script re-runs on every
+interaction (keystroke → widget change → submit). That mental model drives
+everything about how state works.
+
+**The three-part chat loop** (same pattern you'll see in every chat app):
+1. **Render history** — replay `st.session_state.messages` as bubbles.
+2. **On new input** — optimistically render the user bubble, call the LLM
+   with `system + full history`, render the reply.
+3. **Persist reply** — append the assistant message so the *next* rerun
+   includes it.
+
+**Why history in `session_state`?** The LLM API is *stateless* — it forgets
+everything between calls. Multi-turn works only because we resend the entire
+conversation each time. (LangGraph in Step 6 moves this state into the graph;
+the UI keeps owning display only.)
+
+**What's still raw:** the file talks to the `openai` SDK directly. Step 4
+replaces that one call with LangChain — watch how little else changes.
+
+**Try it:**
+```bash
+.venv/bin/streamlit run streamlit_app.py
+```
+Ask "what's your refund policy?" then a follow-up like "and if it's damaged?" —
+the second answer only works because history is resent.
