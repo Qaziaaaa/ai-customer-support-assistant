@@ -1,4 +1,10 @@
-/* Hero chat panel — sits in .header-2-image-wrapper (replaces Chatbot.jpg) */
+/* Hero chat panel — theme tokens from Webflow template + hero-photo layout.
+   Colors/fonts/radius only come from the site's CSS variables:
+     --white #fefefd · --white-smoke #f4f8fb · --light-grey #dfdfdf
+     --dark-slate-grey #333a44 · --dark-grey #555d6a · --dim-grey #979797
+     --black #181b20 · --blue-violet #723cdc · --medium-slate-blue #896cff
+     --lavender #ded6fe · --lavender-lite #efeafb · --light-salmon #ffb2a4
+   Radius: 10px (cards/buttons/inputs). Font: Ubuntu. */
 
 .nm-chat {
   display: flex;
@@ -7,19 +13,22 @@
   height: 100%;
   min-height: 540px;
   max-height: 640px;
-  background: #fefefd;
+  background: var(--white, #fefefd);
   font-family: Ubuntu, Helvetica, sans-serif;
-  color: #181b20;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--dark-slate-grey, #333a44);
 }
 
-/* ── header ─────────────────────────────────────────── */
+/* ── header (hero-photo: lavender chrome) ───────────── */
 .nm-chat__header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  background: linear-gradient(135deg, #3898ec 0%, #723cdc 100%);
-  color: #fff;
+  background: var(--lavender-lite, #efeafb);
+  border-bottom: 1px solid var(--light-grey, #dfdfdf);
+  color: var(--black, #181b20);
   flex-shrink: 0;
 }
 
@@ -27,7 +36,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--lavender, #ded6fe);
+  color: var(--blue-violet, #723cdc);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,11 +54,12 @@
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.2;
+  color: var(--black, #181b20);
 }
 
 .nm-chat__status {
   font-size: 0.75rem;
-  opacity: 0.9;
+  color: var(--blue-violet, #723cdc);
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -58,18 +69,18 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #6dffb0;
-  box-shadow: 0 0 0 0 rgba(109, 255, 176, 0.6);
+  background: var(--blue-violet, #723cdc);
+  box-shadow: 0 0 0 0 rgba(114, 60, 220, 0.55);
   animation: nm-pulse 2s infinite;
 }
 
 @keyframes nm-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(109, 255, 176, 0.55); }
-  70% { box-shadow: 0 0 0 6px rgba(109, 255, 176, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(109, 255, 176, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(114, 60, 220, 0.55); }
+  70% { box-shadow: 0 0 0 6px rgba(114, 60, 220, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(114, 60, 220, 0); }
 }
 
-/* ── messages ───────────────────────────────────────── */
+/* ── messages (hero-photo: clean white field) ───────── */
 .nm-chat__messages {
   flex: 1;
   overflow-y: auto;
@@ -77,16 +88,14 @@
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  background:
-    radial-gradient(circle at 100% 0%, rgba(114, 60, 220, 0.05), transparent 40%),
-    #f4f8fb;
+  background: var(--white, #fefefd);
   scroll-behavior: smooth;
 }
 
 .nm-msg {
   max-width: 86%;
-  padding: 0.65rem 0.9rem;
-  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  border-radius: 1.25rem; /* pill like hero photo */
   font-size: 0.9rem;
   line-height: 1.45;
   white-space: pre-wrap;
@@ -99,34 +108,37 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* bot = left, soft card like .testimonial-content */
 .nm-msg--bot {
   align-self: flex-start;
-  background: #fff;
-  border: 1px solid #e6ecf3;
-  border-bottom-left-radius: 4px;
-  color: #222;
+  background: var(--white-smoke, #f4f8fb);
+  border: 1px solid var(--light-grey, #dfdfdf);
+  border-bottom-left-radius: 0.35rem;
+  color: var(--dark-slate-grey, #333a44);
 }
 
+/* user = right, brand violet */
 .nm-msg--user {
   align-self: flex-end;
-  background: #3898ec;
-  color: #fff;
-  border-bottom-right-radius: 4px;
+  background: var(--blue-violet, #723cdc);
+  color: var(--white, #fefefd);
+  border-bottom-right-radius: 0.35rem;
 }
 
 .nm-msg--error {
   align-self: center;
-  background: #ffdede;
-  color: #8b1e1e;
+  background: var(--light-salmon, #ffb2a4);
+  color: var(--black, #181b20);
   font-size: 0.82rem;
   max-width: 92%;
+  border-radius: 10px;
 }
 
 .nm-msg--typing {
   align-self: flex-start;
-  background: #fff;
-  border: 1px solid #e6ecf3;
-  border-bottom-left-radius: 4px;
+  background: var(--white-smoke, #f4f8fb);
+  border: 1px solid var(--light-grey, #dfdfdf);
+  border-bottom-left-radius: 0.35rem;
   display: flex;
   gap: 5px;
   padding: 0.8rem 1rem;
@@ -136,7 +148,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #896cff;
+  background: var(--medium-slate-blue, #896cff);
   animation: nm-bounce 1.2s infinite ease-in-out;
 }
 
@@ -148,59 +160,68 @@
   30% { transform: translateY(-5px); opacity: 1; }
 }
 
-/* ── composer ───────────────────────────────────────── */
+/* ── composer (hero-photo: lavender footer) ─────────── */
 .nm-chat__composer {
   display: flex;
   gap: 0.55rem;
   padding: 0.85rem 1rem;
-  background: #fff;
-  border-top: 1px solid #e6ecf3;
+  background: var(--lavender-lite, #efeafb);
+  border-top: 1px solid var(--light-grey, #dfdfdf);
   flex-shrink: 0;
 }
 
+/* .form-input clone */
 .nm-chat__input {
   flex: 1;
-  border: 1px solid #d0d6de;
+  min-height: 2.75rem;
+  border: 1px solid var(--dim-grey, #979797);
   border-radius: 10px;
-  padding: 0.65rem 0.9rem;
+  padding: 0.5rem 0.75rem;
   font-family: inherit;
-  font-size: 0.9rem;
-  color: #181b20;
-  background: #fafafa;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--dark-grey, #555d6a);
+  background-color: rgba(0, 0, 0, 0);
   outline: none;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s;
 }
 
-.nm-chat__input::placeholder { color: #979797; }
+.nm-chat__input::placeholder { color: var(--dim-grey, #979797); }
 
 .nm-chat__input:focus {
-  border-color: #723cdc;
-  background: #fff;
+  border-color: var(--black, #181b20);
+  color: var(--dark-grey, #555d6a);
 }
 
+/* .button clone */
 .nm-chat__send {
-  border: 0;
+  border: 1px solid #d0d6de;
   border-radius: 10px;
-  padding: 0 1.1rem;
-  background: #181b20;
-  color: #fff;
+  padding: 0.75rem 1.25rem;
+  background: var(--black, #181b20);
+  color: var(--white, #fefefd);
   font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background-color 0.2s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
 }
 
-.nm-chat__send:hover:not(:disabled) { background: #723cdc; }
+.nm-chat__send:hover:not(:disabled) {
+  background: var(--blue-violet, #723cdc);
+  border-color: var(--blue-violet, #723cdc);
+}
+
 .nm-chat__send:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* ── scrollbars ─────────────────────────────────────── */
 .nm-chat__messages::-webkit-scrollbar { width: 6px; }
 .nm-chat__messages::-webkit-scrollbar-thumb {
-  background: #c8c8c8;
+  background: var(--light-grey, #dfdfdf);
   border-radius: 3px;
 }
 .nm-chat__messages::-webkit-scrollbar-track { background: transparent; }
