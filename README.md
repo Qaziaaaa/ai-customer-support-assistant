@@ -50,9 +50,8 @@ flowchart LR
     L -. traced by .-> LS[(LangSmith)]
 ```
 
-Deep dives (6 diagrams): **[ARCHITECTURE.md](ARCHITECTURE.md)** —
-module map, sequence flow, state graph, tool contract, trace anatomy,
-future extension points.
+Deep dives (4 simple diagrams): **[ARCHITECTURE.md](ARCHITECTURE.md)** —
+big picture, agent loop, where answers come from, future plug-in points.
 
 ### Viewing diagrams in VS Code
 
