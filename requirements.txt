@@ -18,3 +18,7 @@ langgraph>=0.2.60
 
 # Step 7: LangSmith — tracing/observability (key optional; app runs without it)
 langsmith>=0.2.0
+
+# Landing page server (static clone + /api/chat)
+fastapi>=0.115.0
+uvicorn>=0.32.0
