@@ -1223,7 +1223,7 @@
           if (/\.webflow\.io$/i.test(publishedDomain) && location.hostname !== publishedDomain) {
             shouldBrand = true;
           }
-          if (shouldBrand && !isPhantom) {
+          if (false && shouldBrand && !isPhantom) {
             brandElement = brandElement || createBadge();
             ensureBrand();
             setTimeout(ensureBrand, 500);

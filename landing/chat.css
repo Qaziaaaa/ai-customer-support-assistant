@@ -240,3 +240,6 @@
   .nm-chat { min-height: 0; }
   .nm-msg { max-width: 92%; }
 }
+
+/* never show the runtime Webflow badge */
+.w-webflow-badge { display: none !important; }
