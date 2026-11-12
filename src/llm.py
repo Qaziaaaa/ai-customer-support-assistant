@@ -20,9 +20,9 @@ from langchain_groq import ChatGroq
 
 from src.config import get_settings
 
-# Groq's free tier: qwen3.8-27b is fast, stable and supports tool calling.
-# (llama-3.3-70b-versatile was removed from Groq in late 2026.)
-DEFAULT_MODEL = "qwen/qwen3.8-27b"
+# Groq free tier. gpt-oss-120b: 3/3 reliable tool-calling in our tests
+# (qwen3.8-27b occasionally emitted malformed tool calls; llama-3.3 removed).
+DEFAULT_MODEL = "openai/gpt-oss-120b"
 
 
 @lru_cache(maxsize=1)
@@ -37,4 +37,5 @@ def get_llm(model: str = DEFAULT_MODEL) -> BaseChatModel:
         api_key=settings.groq_api_key,
         model=model,
         temperature=0,  # support answers should be deterministic
+        max_tokens=800,  # free tier caps output at 1000 tokens/min — stay under
     )
